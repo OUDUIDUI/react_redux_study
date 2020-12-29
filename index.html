@@ -17,12 +17,17 @@
     <!--  使用babel编译JSX  -->
     <script type="text/babel">
         class App extends React.Component{
+            // 设置state状态
+            state = {
+                name: 'OUDUIDUI',
+                age: 24
+            };
             render(){
                 // JSX (只能有一个根标签)
                 return (
                     <div className="app-content">
                         <h1>Hello World!</h1>
-                        <p>{Math.random()*10}</p>
+                        <p>My name is {this.state.name},and my age is {this.state.age}.</p>
                     </div>
                 );
             }
