@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>React环境</title>
+    <title>React</title>
     <!--  引入CDN  -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
@@ -19,15 +19,28 @@
         class App extends React.Component{
             // 设置state状态
             state = {
-                name: 'OUDUIDUI',
-                age: 24
+                num: 0
+            };
+            // 定义函数
+            handleClick = (e) =>{
+                this.setState(state => ({
+                    num: state.num+1
+                }))
+            };
+            handleMouseOver = (e) =>{
+                console.log(e.pageX,e.pageY);
+            };
+            handleCopy = (e) =>{
+                console.log("复制请标注出此！")
             };
             render(){
                 // JSX (只能有一个根标签)
                 return (
                     <div className="app-content">
                         <h1>Hello World!</h1>
-                        <p>My name is {this.state.name},and my age is {this.state.age}.</p>
+                        <p onCopy={this.handleCopy}>Num : {this.state.num}</p>
+                        <button onClick={this.handleClick}>点击</button>
+                        <button onMouseOver={this.handleMouseOver}>悬停</button>
                     </div>
                 );
             }
