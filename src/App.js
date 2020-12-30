@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import Contact from "./Contact";
-import AddContact from "./AddContact"
+import AddContact from "./AddContact";
+
+import "./App.css"
 
 class App extends Component{
     state = {

@@ -1,3 +1,6 @@
+import React from "react";
+import "./Contact.css";
+
 const Contact = (props) => {
     // 获取列表
     const {list, deleteContact} = props;
