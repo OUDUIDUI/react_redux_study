@@ -3,13 +3,21 @@ import React, {Component} from 'react';
 
 class Contact extends Component {
     render() {
-        const {name, age, sex} = this.props;
+        // 获取列表
+        const {list} = this.props;
+        const newList = list.map(contact => {
+            return (
+                <div className="ContactFrom" key={contact.id}>
+                    <div>Name: { contact.name }</div>
+                    <div>Age: { contact.age }</div>
+                    <div>Sex: { contact.sex }</div>
+                </div>
+            )
+        })
         return (
-            <div className="ContactFrom">
-                <div>Name: { name }</div>
-                <div>Age: { age }</div>
-                <div>Sex: { sex }</div>
-            </div>
+           <div className="list">
+               {newList}
+           </div>
         )
     }
 }

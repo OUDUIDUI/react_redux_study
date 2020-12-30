@@ -1,5 +1,5 @@
 # React && Redux 学习
-### 组件嵌套与通讯
+### 组件列表渲染
 ##### 运行手脚架
 安装配置
 ```shell
@@ -10,68 +10,79 @@ yarn install
 yarn start
 ```
 
-##### 创建组件
-在`src`路径下新建`Contact.js`文件作为组件。
-```js
-// 引入React和Component
-import React, {Component} from 'react';
-
-class Contact extends Component {
-    render() {
-        return (
-            <div className="ContactFrom">
-                <div>Name: OUDUIDUI</div>
-                <div>Age: 24</div>
-                <div>Sex: Male</div>
-            </div>
-        )
-    }
-}
-
-// 导出组件
-export default Contact;
-```
-
-##### 引入组件
-在`App.js`引入`Contact.js`组件
-```js
-// 引入组件
-import Contact from "./Contact";
-
-function App() {
+##### 将App.js修改为类组件
+ `App.js`默认是函数式组件，因此没有`state`属性。
+ 
+ 如果我们需要在`App.js`使用到`state`属性，就得先将其修改为类组件。
+ 
+ ```js
+// 函数式组件
+function App(){
     return (
         <div className="App">
-            <!-- 使用组件 -->
-            <Contact />
+            <h1>Hello World</h1>
         </div>
     );
 }
 
 export default App;
 ```
-
-##### 组件传值
-在`App.js`给`Contact.js`组件绑定参数
-```html
-<Contact name="OUDUIDUI" age="32" sex="male"/>
-```
-在`Contact.js`组件里通过`props`获取
 ```js
+// 类组件
 import React, {Component} from 'react';
 
-class Contact extends Component {
+class App extends Component{
+    state = {};
     render() {
-        // 使用es6语法获取props值
-        const {name, age, sex} = this.props;
         return (
-            <div className="ContactFrom">
-                <div>Name: { name }</div>
-                <div>Age: { age }</div>
-                <div>Sex: { sex }</div>
+            <div className="App">
+                <h1>Hello World</h1>
             </div>
-        )
+        );
     }
 }
 
-export default Contact;
+export default App;
+
+```
+##### 创建列表
+在`App.js`中`state`创建一个列表。
+```js
+state = {
+    contactForm: [
+        {id: 1, name: 'OUDUIDUI', age: '24', sex: 'male'},
+        {id: 2, name: 'Lucy', age: '23', sex: 'female'}
+    ]
+};
+```
+然后将列表传给子组件`Contact`
+```html
+<Contact list={this.state.contactForm} />
+```
+
+##### 获取列表
+在`Contact.js`中，通过`props`获取列表
+```js
+const {list} = this.props;
+```
+##### 渲染列表
+通过ES6中数值方法`map`处理列表。
+```js
+const newList = list.map(contact => {
+    return (
+        <div className="ContactFrom" key={contact.id}>
+            <div>Name: { contact.name }</div>
+            <div>Age: { contact.age }</div>
+            <div>Sex: { contact.sex }</div>
+        </div>
+    )
+})
+```
+列表渲染需要赋予`key`值作为索引，否则会报错。
+
+将`newList`渲染处理。
+```html
+<div className="list">
+   {newList}
+</div>
 ```
