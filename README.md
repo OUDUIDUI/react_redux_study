@@ -120,7 +120,7 @@ handleSubmit = (e) => {
 ```js
  addContact = (contact) => {
     // 赋予id
-    contact.id = this.state.contactForm.length + 1;
+    contact.id = Math.ceil(Math.random()*10000);
     // 通过解构创建新的数值，并插入新的值
     let contactForm = [...this.state.contactForm,contact];
     // 赋值给state
@@ -128,4 +128,48 @@ handleSubmit = (e) => {
         contactForm:contactForm
     })
 }
+```
+
+##### 实现删除事件
+先在父组件定义删除函数，并绑定给子组件`Contact.js`。
+```js
+deleteContact = (id) => {
+    const contactForm = this.state.contactForm.filter(contact => {
+        return contact.id !== id;
+    })
+    this.setState({
+        contactForm:contactForm
+    })
+}
+```
+```html
+<Contact list={this.state.contactForm} deleteContact={this.deleteContact} />
+```
+
+然后在子组件`Contact.js`中增加删除按钮，并且绑定事件。
+
+为了防止自调用，所以使用`() => deleteContact(contact.id)`写法。
+```js
+const Contact = (props) => {
+    // 获取列表
+    const {list, deleteContact} = props;
+    const newList = list.map(contact => {
+        return (
+            <div className="ContactFrom" key={contact.id}>
+                <div>Name: { contact.name }</div>
+                <div>Age: { contact.age }</div>
+                <div>Sex: { contact.sex }</div>
+                 <!-- 删除按钮 -->
+                <button onClick={() => deleteContact(contact.id)}>删除</button>
+            </div>
+        )
+    })
+    return (
+        <div className="list">
+            {newList}
+        </div>
+    )
+}
+
+export default Contact;
 ```

@@ -9,9 +9,19 @@ class App extends Component{
             {id: 2, name: 'Lucy', age: '23', sex: 'female'}
         ]
     };
+    // 增加
     addContact = (contact) => {
-        contact.id = this.state.contactForm.length + 1;
+        contact.id = Math.ceil(Math.random()*10000);
         let contactForm = [...this.state.contactForm,contact];
+        this.setState({
+            contactForm:contactForm
+        })
+    }
+    // 删除
+    deleteContact = (id) => {
+        const contactForm = this.state.contactForm.filter(contact => {
+            return contact.id !== id;
+        })
         this.setState({
             contactForm:contactForm
         })
@@ -22,7 +32,7 @@ class App extends Component{
                 <header className="App-header">
                     <h1>Hello World</h1>
                 </header>
-                <Contact list={this.state.contactForm} />
+                <Contact list={this.state.contactForm} deleteContact={this.deleteContact} />
                 <AddContact addContact={this.addContact}/>
             </div>
         );
