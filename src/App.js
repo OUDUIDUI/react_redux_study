@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Contact from "./Contact";
 
+// 状态组件 类组件
 class App extends Component{
     state = {
         contactForm: [
