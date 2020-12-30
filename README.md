@@ -1,5 +1,5 @@
 # React && Redux 学习
-### 高阶组件（Higher Order Components）
+### axios
 ##### 运行手脚架
 安装配置
 ```shell script
@@ -9,57 +9,55 @@ yarn install
 ```shell script
 yarn start
 ```
-##### 引入MaterializeCSS库
-在`public/index.html`引入css库。
-> [materializecss](https://materializecss.com/getting-started.html)
-```html
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+##### 安装axios
+```shell script
+yarn add axios
 ```
 
-##### 新建高阶组件
-在`src`中新建`hoc`文件夹，然后新建一个`Rainbow.js`高阶组件，用于控制组件文本格式。
+##### 使用axios
 ```js
-import React from "react";
+import React, {Component} from 'react';
+// 引入axios
+import axios from 'axios';
 
-// 高阶组件其实一个函数，所以使用函数式组件
-const Rainbow = (WrappedComponent) => {
-    // 随机出一个字体样式的类
-    const colors = ["red","blue","green","orange","yellow","pink"];
-    const randomColors = colors[Math.floor(Math.random()*6)];
-    const className = randomColors + '-text';
-
-    return (props) => (
-        <div className={className}>
-            <WrappedComponent {...props} />
-        </div>
-    )
-}
-
-export default Rainbow
-```
-
-##### 引入高阶组件
-在`Home.js`引入高阶组件。
-```js
-import React from "react";
-// 引入高阶组件
-import Rainbow from "../hoc/Rainbow"
-
-const Home = (props) => {
-    const toAboutPage = () => {
-        props.history.push('/About');
+class App extends Component{
+    state = {
+        posts: [],
     }
-    return (
-        <div>
-            <div className="container">
-                <h3 className="center">Home页面</h3>
-                <p>Hello World!</p>
-                <button onClick={toAboutPage}>关于OUDUIDUI</button>
+    // 在componentDidMount生命周期进行数据请求
+    componentDidMount() {
+        axios.get('https://jsonplaceholder.typicode.com/posts')
+            .then(res => {
+            console.log(res);
+            // 将请求到的数据进行复制给state.post
+            this.setState({
+                posts: res.data
+            })
+        })
+    }
+    render() {
+        const { posts } = this.state;
+        const postList = posts.length ? (
+            posts.map(post => {
+                return (
+                    <div className="post card" key={post.id}>
+                        <div className="card-content">
+                            <span className="card-title">{post.title}</span>
+                            <p>{post.body}</p>
+                        </div>
+                    </div>
+                )
+            })
+        ) : (
+            <div className="center">没有博客文章进行展示</div>
+        )
+        return (
+            <div className="App container">
+                {postList}
             </div>
-        </div>
-    )
+        );
+    }
 }
 
-// 使用高阶组件进行导出
-export default Rainbow(Home);
+export default App;
 ```
