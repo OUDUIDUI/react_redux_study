@@ -1,4 +1,5 @@
 import React from "react";
+import Rainbow from "../hoc/Rainbow"
 
 const Home = (props) => {
     const toAboutPage = () => {
@@ -15,5 +16,5 @@ const Home = (props) => {
     )
 }
 
-export default Home;
+export default Rainbow(Home);
 
