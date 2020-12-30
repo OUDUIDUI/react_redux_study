@@ -1,41 +1,33 @@
 import React, {Component} from 'react';
-import Contact from "./Contact";
-import AddContact from "./AddContact";
-
-import "./App.css"
 
 class App extends Component{
     state = {
-        contactForm: [
-            {id: 1, name: 'OUDUIDUI', age: '24', sex: 'male'},
-            {id: 2, name: 'Lucy', age: '23', sex: 'female'}
-        ]
+        num: 0
     };
-    // 增加
-    addContact = (contact) => {
-        contact.id = Math.ceil(Math.random()*10000);
-        let contactForm = [...this.state.contactForm,contact];
+    addNum = () =>{
+        const newNum = this.state.num + 1;
         this.setState({
-            contactForm:contactForm
+            num : newNum
         })
+    };
+
+    componentDidMount() {
+        console.log('挂载完成!');
+    };
+    componentDidUpdate(prevProps, prevState) {
+        console.log("更新完成");
+        console.log(prevProps);
+        console.log(prevState);
     }
-    // 删除
-    deleteContact = (id) => {
-        const contactForm = this.state.contactForm.filter(contact => {
-            return contact.id !== id;
-        })
-        this.setState({
-            contactForm:contactForm
-        })
-    }
+
     render() {
         return (
             <div className="App">
                 <header className="App-header">
                     <h1>Hello World</h1>
+                    <p>{this.state.num}</p>
+                    <button onClick={this.addNum}>Add</button>
                 </header>
-                <Contact list={this.state.contactForm} deleteContact={this.deleteContact} />
-                <AddContact addContact={this.addContact}/>
             </div>
         );
     }
