@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Contact from "./Contact";
+import AddContact from "./AddContact"
 
-// 状态组件 类组件
 class App extends Component{
     state = {
         contactForm: [
@@ -9,6 +9,13 @@ class App extends Component{
             {id: 2, name: 'Lucy', age: '23', sex: 'female'}
         ]
     };
+    addContact = (contact) => {
+        contact.id = this.state.contactForm.length + 1;
+        let contactForm = [...this.state.contactForm,contact];
+        this.setState({
+            contactForm:contactForm
+        })
+    }
     render() {
         return (
             <div className="App">
@@ -16,6 +23,7 @@ class App extends Component{
                     <h1>Hello World</h1>
                 </header>
                 <Contact list={this.state.contactForm} />
+                <AddContact addContact={this.addContact}/>
             </div>
         );
     }
