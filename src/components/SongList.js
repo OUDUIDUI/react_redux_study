@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState,useEffect} from "react";
 import {v4 as uuidv4} from "uuid";
 import AddSongForm from "./AddSongForm";
 
@@ -11,6 +11,12 @@ const SongList = () => {
     const addSong = (title) => {
         setSongs([...songs,{title, id: uuidv4()}])
     }
+
+    // 初始化加载以及数据更新时会调用
+    useEffect(() => {
+        console.log('useEffect函数运行中');
+    },[songs])  // 只要songs改变时才会调用
+
     return (
         <div className="song-list">
             <ul>

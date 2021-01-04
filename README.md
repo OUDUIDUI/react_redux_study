@@ -24,29 +24,11 @@ yarn start
 - **useContext()** : 共享状态钩子， 用于组件之间共享状态
 
 
-##### useState使用
+##### useEffect使用
+`useEffect`可用于组件的数据请求，模拟类组件的生命周期。
 ```js
-import React, {useState} from "react";
-
-const SongList = () => {
-    // useState返回一个state数据和一个setState方法
-    const [songs,setSongs] = useState([
-        {title: '新世界 - 华晨宇', id: 1},
-        {title: '好想爱这个世界啊 - 华晨宇', id: 2},
-        {title: '斗牛 - 华晨宇', id: 3},
-    ])
-    return (
-        <div className="song-list">
-            <ul>
-                {songs.map(song => {
-                    return (
-                        <li key={song.id}>{song.title}</li>
-                    )
-                })}
-            </ul>
-        </div>
-    )
-}
-
-export default SongList;
+// 初始化加载以及数据更新时会调用
+useEffect(() => {
+    console.log('useEffect函数运行中');
+},[songs])  // 只要songs改变时才会调用
 ```
