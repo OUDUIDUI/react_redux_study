@@ -46,3 +46,53 @@ const BookList = () => {
 
 export default BookList;
 ```
+
+##### 同时获取多个上下文
+```js
+import React, {useContext} from 'react';
+import {ThemeContext} from "../contexts/ThemeContext";
+import {AuthContext} from "../contexts/AuthContext";
+
+const Navbar = () => {
+    const {isAuthenticated,toggleAuth} = useContext(AuthContext);
+    const {isLightTheme, light, dark} = useContext(ThemeContext);
+    const theme = isLightTheme ? light : dark;
+    return(
+        <nav style={{background: theme.ui, color: theme.syntax}}>
+            <h1>Context App</h1>
+            <div onClick={toggleAuth}>
+                {isAuthenticated ? '登录' : '登出'}
+            </div>
+            <ul>
+                <li>Home</li>
+                <li>About</li>
+                <li>Contact</li>
+            </ul>
+        </nav>
+    )
+}
+
+export default Navbar;
+```
+
+
+##### 函数式上下文
+```js
+import React, {createContext, useState} from "react";
+
+export const AuthContext = createContext();
+
+const AuthContextProvider = (props) => {
+    const [isAuthenticated,setIsAuthenticated] = useState(false);
+    const toggleAuth = () => {
+        setIsAuthenticated(!isAuthenticated)
+    }
+    return (
+        <AuthContext.Provider value={{isAuthenticated, toggleAuth}}>
+            {props.children}
+        </AuthContext.Provider>
+    )
+}
+
+export default AuthContextProvider;
+```
