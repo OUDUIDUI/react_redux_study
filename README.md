@@ -18,9 +18,9 @@ state = {
 // 定义函数
 handleClick = (e) =>{     // 使用箭头函数，函数内才可以访问到this
     // react修改state的值需要使用this.setState()
-    this.setState(state => ({
-        num: state.num + 1
-    }))
+    this.setState({
+        num: this.state.num + 1
+    })
 };
 ```
 

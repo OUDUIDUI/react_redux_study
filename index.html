@@ -23,9 +23,9 @@
             };
             // 定义函数
             handleClick = (e) =>{
-                this.setState(state => ({
-                    num: state.num+1
-                }))
+                this.setState({
+                    num: this.state.num + 1
+                })
             };
             handleMouseOver = (e) =>{
                 console.log(e.pageX,e.pageY);
