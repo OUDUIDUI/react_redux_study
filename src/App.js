@@ -1,25 +1,19 @@
-import React, {Component} from 'react';
-import {Route,BrowserRouter,Switch} from "react-router-dom";
+import Navbar from "./components/Navbar";
+import BookList from "./components/BookList";
+import ThemeContextProvider from "./contexts/ThemeContext";
+import ThemeToggle from "./components/ThemeToggle";
+import React from "react";
 
-import Home from "./components/Home";
-import Post from "./components/Post";
-
-class App extends Component{
-    state = {
-        posts: [],
-    }
-    render() {
-        return (
-            <BrowserRouter>
-                <div className="App">
-                    <Switch>
-                        <Route exact path="/" component={Home} />
-                        <Route path="/:id" component={Post} />
-                    </Switch>
-                </div>
-            </BrowserRouter>
-        );
-    }
+function App() {
+    return (
+        <div className="App">
+            <ThemeContextProvider>
+                <Navbar/>
+                <BookList/>
+                <ThemeToggle />
+            </ThemeContextProvider>
+        </div>
+    );
 }
 
 export default App;

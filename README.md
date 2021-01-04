@@ -1,5 +1,5 @@
 # React && Redux 学习
-### React-Redux基本使用
+### Context API
 ##### 运行手脚架
 安装配置
 ```shell script
@@ -9,201 +9,196 @@ yarn install
 ```shell script
 yarn start
 ```
-##### 安装Redux
-```shell
-yarn add redux react-redux
-```
+##### React Context API
+`React Context API` 是针对所谓状态管理（state management）而设计的API。
 
-##### 创建reducer
-在`src`路径下创建`reducers`文件夹，然后在里面创建`rootReducer.js`。
+`Context API`以一种更直接有效的方式解决了早期使用`props`来处理嵌套UI的状态共享的问题。
+
+##### 创建Context
+在`src`路径下新建`contexts`文件夹，然后在文件夹内创建`ThemeContext.js`。
 ```js
-const initState = {
-    // 存放博客
-    posts: [
-        {
-            "userId": 1,
-            "id": 1,
-            "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
-            "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
-        },
-        {
-            "userId": 1,
-            "id": 2,
-            "title": "qui est esse",
-            "body": "est rerum tempore vitae\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\nfugiat blanditiis voluptate porro vel nihil molestiae ut reiciendis\nqui aperiam non debitis possimus qui neque nisi nulla"
-        },
-        {
-            "userId": 1,
-            "id": 3,
-            "title": "ea molestias quasi exercitationem repellat qui ipsa sit aut",
-            "body": "et iusto sed quo iure\nvoluptatem occaecati omnis eligendi aut ad\nvoluptatem doloribus vel accusantium quis pariatur\nmolestiae porro eius odio et labore et velit aut"
-        },
-        {
-            "userId": 1,
-            "id": 4,
-            "title": "eum et est occaecati",
-            "body": "ullam et saepe reiciendis voluptatem adipisci\nsit amet autem assumenda provident rerum culpa\nquis hic commodi nesciunt rem tenetur doloremque ipsam iure\nquis sunt voluptatem rerum illo velit"
-        }]
-}
+import React, {createContext, Component} from "react";
 
-const rootReducer = (state = initState, action) => {
-    if(action.type === "DELETE_POST"){
-        // 删除博客
-        let newPosts = state.posts.filter(post => {
-            return post.id !== Number(action.id)
-        })
-        return {
-            ...state,
-            posts: newPosts
-        }
+// 创建主题UI的上下文
+export const ThemeContext = createContext();
+
+class ThemeContextProvider extends Component {
+    state = {
+        isLightTheme: true,
+        light: {bg: '#eee', ui: "#ddd", syntax: "#555"},
+        dark: {bg: '#555', ui: "#333", syntax: "#ddd"},
+    };
+
+    render() {
+        return (
+            // 将state的值返回出去
+            <ThemeContext.Provider value={{...this.state}}>
+                {this.props.children}
+            </ThemeContext.Provider>
+        )
     }
-
-    return state;
 }
 
-export default rootReducer;
+export default ThemeContextProvider;
 ```
 
-##### 引入redux
-在`index.js`中引入redux。
+##### 引入Context
+在`App.js`中进行引入。
 ```js
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-// 引入redux
-import {createStore} from "redux";
-import {Provider} from "react-redux";
-// 引入reducer
-import rootReducer from "./reducers/rootReucer";
+import Navbar from "./components/Navbar";
+import BookList from "./components/BookList";
+import ThemeContextProvider from "./contexts/ThemeContext";
 
-// 创建store
-const store = createStore(rootReducer);
+function App() {
+    return (
+        <div className="App">
+            <ThemeContextProvider>
+                <Navbar/>
+                <BookList />
+            </ThemeContextProvider>
+        </div>
+    );
+}
 
-ReactDOM.render(
-    <React.StrictMode>
-        <!-- 引入store -->
-        <Provider store={store}>
-            <App/>
-        </Provider>
-    </React.StrictMode>,
-    document.getElementById('root')
-);
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+export default App;
 ```
 
-##### 获取redux中的博客
-在`Home.js`中获取`redux`中的博客。
+##### 在组件获取Context
+有两种方法可以获取Context上下文，一种是`ContextType`方法，一种是`Consumer`方法。
+- `ContextType`方法仅适用于类组件，而不能用于UI组件
+- `Consumer`方法适用于任何组件
+
+**`ContextType`方法**
 ```js
 import React, {Component} from 'react';
-import {Link} from "react-router-dom";
-// 引入redux连接高级组件
-import {connect} from "react-redux";
+// 引入ThemeContext
+import {ThemeContext} from "../contexts/ThemeContext";
 
-class Home extends Component{
+class Navbar extends Component {
+    // 获取ThemeContext
+    static contextType = ThemeContext;
+
     render() {
-        // 从props中获取到posts
-        const posts = this.props.posts;
-        const postList = posts.length ? (
-            posts.map(post => {
+        // 通过this.context获取
+        const {isLightTheme, light, dark} = this.context;
+        const theme = isLightTheme ? light : dark;
+        return (
+            <nav style={{background: theme.ui, color: theme.syntax}}>
+                <h1>Context App</h1>
+                <ul>
+                    <li>Home</li>
+                    <li>About</li>
+                    <li>Contact</li>
+                </ul>
+            </nav>
+        )
+    }
+}
+
+export default Navbar;
+```
+**`Consumer`方法**
+```js
+import React, {Component} from 'react';
+// 引入ThemeContext
+import {ThemeContext} from "../contexts/ThemeContext";
+
+class BookList extends Component {
+    render() {
+        return (
+            <ThemeContext.Consumer>{(context) => {
+                const {isLightTheme, light, dark} = context;
+                const theme = isLightTheme ? light : dark;
                 return (
-                    <div className="post card" key={post.id}>
-                        <div className="card-content">
-                            <Link to={'/' + post.id}>
-                                <span className="card-title">{post.title}</span>
-                            </Link>
-                            <p>{post.body}</p>
-                        </div>
+                    <div className="book-list" style={{color: theme.syntax, background: theme.bg}}>
+                        <ul>
+                            <li style={{background: theme.ui}}>《撒哈拉的故事》</li>
+                            <li style={{background: theme.ui}}>《梦里花落知多少》</li>
+                            <li style={{background: theme.ui}}>《雨季不再来》</li>
+                        </ul>
                     </div>
                 )
-            })
-        ) : (
-            <div className="center">没有博客文章进行展示</div>
+            }}
+            </ThemeContext.Consumer>
         )
-        return (
-            <div className="container">
-                <h3 className="center">博客列表</h3>
-                {postList}
-            </div>
-        );
     }
 }
 
-// 创建mapStateToProps函数
-const mapStateToProps = (state) => {
-    return{
-        posts: state.posts
-    }
-}
-
-// 使用高级组件链接redux
-export default connect(mapStateToProps)(Home);
+export default BookList;
 ```
 
-##### action生成器
-在`src`路径下创建`actions`文件夹，存放actions生成器。
-在里面创建`postActions.js`,专门处理博客动作。
+##### 修改Context上下文的值
+在`ThemeContext.js`中创建修改值的函数。
 ```js
-export const deletePost = (id) => {
-    return{
-        type: "DELETE_POST",
-        id
-    }
-}
-```
+import React, {createContext, Component} from "react";
 
-然后在`Post.js`中实现删除博客。
-```js
-import React, {Component} from 'react';
-import {connect} from "react-redux";
-// 引入博客action
-import {deletePost} from "../actions/postActions"
+export const ThemeContext = createContext();
 
-class Post extends Component{
-    // 删除动作
-    handleClick = () => {
-        this.props.deletePost(this.props.match.params.id);
-        this.props.history.push('/');
+class ThemeContextProvider extends Component {
+    state = {
+        isLightTheme: true,
+        light: {bg: '#eee', ui: "#ddd", syntax: "#555"},
+        dark: {bg: '#555', ui: "#333", syntax: "#ddd"},
+    };
+    // 修改isLightTheme
+    toggleTheme = () => {
+        this.setState({
+            isLightTheme: !this.state.isLightTheme
+        })
     }
     render() {
-        const post = this.props.post ? (
-            <div className="post">
-                <h4 className="center">{this.props.post.title}</h4>
-                <p>{this.props.post.body}</p>
-                <div className="center">
-                    <button className="btn red" onClick={this.handleClick}>删除</button>
-                </div>
-            </div>
-        ) : (
-            <div className="center">文章正在加载……</div>
-        )
         return (
-            <div className="container">
-                {post}
-            </div>
-        );
+            // 将toggleTheme一同导出
+            <ThemeContext.Provider value={{...this.state, toggleTheme: this.toggleTheme}}>
+                {this.props.children}
+            </ThemeContext.Provider>
+        )
     }
 }
 
-const mapStateToProps = (state,ownProps) => {
-    const id = ownProps.match.params.id;
-    return{
-        post : state.posts.find(post => post.id === Number(id))
+export default ThemeContextProvider;
+```
+
+然后新建一个`ThemeToggle`组件。
+```js
+import React, {Component} from 'react';
+import {ThemeContext} from "../contexts/ThemeContext";
+
+class ThemeToggle extends Component {
+    // 获取ThemeContext
+    static contextType = ThemeContext;
+
+    render() {
+        // 获取toggleTheme函数
+        const {toggleTheme} = this.context;
+        return (
+            <button onClick={toggleTheme}>切换主题样式</button>
+        )
     }
 }
 
-// 创建mapDispatchToProps函数
-const mapDispatchToProps = (dispatch) => {
-    return {
-        deletePost: (id) => dispatch(deletePost(id))
-    }
+export default ThemeToggle;
+```
+
+将`ThemeToggle`组件引入页面。
+```js
+import Navbar from "./components/Navbar";
+import BookList from "./components/BookList";
+import ThemeContextProvider from "./contexts/ThemeContext";
+import ThemeToggle from "./components/ThemeToggle";
+import React from "react";
+
+function App() {
+    return (
+        <div className="App">
+            <ThemeContextProvider>
+                <Navbar/>
+                <BookList/>
+                <ThemeToggle />
+            </ThemeContextProvider>
+        </div>
+    );
 }
 
-// 使用redux高级组件
-export default connect(mapStateToProps,mapDispatchToProps)(Post);
+export default App;
 ```
