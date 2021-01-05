@@ -1,14 +1,17 @@
-import React , { createContext ,useReducer } from "react";
+import React , { createContext ,useReducer,useEffect } from "react";
 import {SongReducer} from "../reducers/SongReducer";
 
 export const SongContext = createContext();
 
 const SongContextProvider = (props) => {
-    const [songs,dispath] = useReducer(SongReducer,[
-        {title: '新世界 - 华晨宇', id: 1},
-        {title: '好想爱这个世界啊 - 华晨宇', id: 2},
-        {title: '斗牛 - 华晨宇', id: 3},
-    ]);
+    const [songs,dispath] = useReducer(SongReducer,[],()=>{
+        const res = localStorage.getItem('songs');
+        return res ? JSON.parse(res) : [];
+    });
+
+    useEffect(() =>{
+        localStorage.setItem('songs',JSON.stringify(songs));
+    },[songs])
 
     return (
         <SongContext.Provider value={{songs,dispath}}>

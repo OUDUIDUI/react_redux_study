@@ -1,5 +1,5 @@
 # React && Redux 学习
-### React Hooks —— useReducer
+### LocalStorage
 ##### 运行手脚架
 安装配置
 ```shell script
@@ -10,54 +10,17 @@ yarn install
 yarn start
 ```
 
-##### useReducer使用
-新建`SongReducers.js`。
+##### React中LocalStorage的应用
+使用`useEffect`监听`songs`变化，并进行本地存储。
 ```js
-import {v4 as uuidv4} from "uuid";
-
-export const SongReducer = (state, action) => {
-    switch (action.type){
-        // 添加歌曲
-        case "ADD_SONG":
-            return [...state,{title: action.title, id: uuidv4()}];
-        // 删除歌曲
-        case "REMOVE_SONG":
-            return state.filter(book => book.id !== action.id);
-        // 其他情况
-        default:
-            return state;
-    }
-}
+useEffect(() =>{
+        localStorage.setItem('songs',JSON.stringify(songs));
+    },[songs])
 ```
-在上下文使用`useRducer`。
+通过`useReducer`第三个参数回调函数获取本地存储值。
 ```js
-import React , { createContext ,useReducer } from "react";
-import {SongReducer} from "../reducers/SongReducer";
-
-export const SongContext = createContext();
-
-const SongContextProvider = (props) => {
-    const [songs,dispath] = useReducer(SongReducer,[
-        {title: '新世界 - 华晨宇', id: 1},
-        {title: '好想爱这个世界啊 - 华晨宇', id: 2},
-        {title: '斗牛 - 华晨宇', id: 3},
-    ]);
-
-    return (
-        <SongContext.Provider value={{songs,dispath}}>
-            {props.children}
-        </SongContext.Provider>
-    )
-}
-
-export default SongContextProvider;
-```
-
-调用负载。
-```js
-const {dispath} = useContext(SongContext);
-// 添加
-dispath({type:'ADD_SONG',title})
-// 删除
-dispath({type:'REMOVE_SONG',id:song.id})
+const [songs,dispath] = useReducer(SongReducer,[],()=>{
+    const res = localStorage.getItem('songs');
+    return res ? JSON.parse(res) : [];
+});
 ```
