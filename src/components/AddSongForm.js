@@ -1,10 +1,12 @@
-import React, {useState} from "react";
+import React, {useState,useContext} from "react";
+import {SongContext} from "../contexts/SongContext";
 
 const AddSongForm = ({addSong}) => {
+    const {dispath} = useContext(SongContext);
     const [title,setTitle] = useState('')
     const handleSubmit = (e) => {
         e.preventDefault();
-        addSong(title);
+        dispath({type:'ADD_SONG',title})
         setTitle('');
     }
     return (

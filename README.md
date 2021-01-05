@@ -1,5 +1,5 @@
 # React && Redux 学习
-### React Hooks —— useState
+### React Hooks —— useReducer
 ##### 运行手脚架
 安装配置
 ```shell script
@@ -10,25 +10,54 @@ yarn install
 yarn start
 ```
 
-##### React Hooks
-`React Hooks`是v16.8版本引入的全新API。
-
-`React Hooks`的意思是，组件尽量写成纯函数，如果需要外部功能和副作用，就用钩子把外部代码引进来。`React Hooks`就是那些钩子。
-
-- 特殊的函数
-- 允许我们在函数组件内部做一些额外的操作，例如使用`State`
-
-**常用钩子**
-- **useState()** : 状态钩子，用于为函数组件引入状态(state)
-- **useEffect()** : 副作用钩子，用于引入具有副作用的操作，最常见的就是向服务器请求数据
-- **useContext()** : 共享状态钩子， 用于组件之间共享状态
-
-
-##### useEffect使用
-`useEffect`可用于组件的数据请求，模拟类组件的生命周期。
+##### useReducer使用
+新建`SongReducers.js`。
 ```js
-// 初始化加载以及数据更新时会调用
-useEffect(() => {
-    console.log('useEffect函数运行中');
-},[songs])  // 只要songs改变时才会调用
+import {v4 as uuidv4} from "uuid";
+
+export const SongReducer = (state, action) => {
+    switch (action.type){
+        // 添加歌曲
+        case "ADD_SONG":
+            return [...state,{title: action.title, id: uuidv4()}];
+        // 删除歌曲
+        case "REMOVE_SONG":
+            return state.filter(book => book.id !== action.id);
+        // 其他情况
+        default:
+            return state;
+    }
+}
+```
+在上下文使用`useRducer`。
+```js
+import React , { createContext ,useReducer } from "react";
+import {SongReducer} from "../reducers/SongReducer";
+
+export const SongContext = createContext();
+
+const SongContextProvider = (props) => {
+    const [songs,dispath] = useReducer(SongReducer,[
+        {title: '新世界 - 华晨宇', id: 1},
+        {title: '好想爱这个世界啊 - 华晨宇', id: 2},
+        {title: '斗牛 - 华晨宇', id: 3},
+    ]);
+
+    return (
+        <SongContext.Provider value={{songs,dispath}}>
+            {props.children}
+        </SongContext.Provider>
+    )
+}
+
+export default SongContextProvider;
+```
+
+调用负载。
+```js
+const {dispath} = useContext(SongContext);
+// 添加
+dispath({type:'ADD_SONG',title})
+// 删除
+dispath({type:'REMOVE_SONG',id:song.id})
 ```
