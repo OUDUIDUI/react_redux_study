@@ -1,46 +1,35 @@
 import React, {useState} from 'react';
-import Values from "values.js";
-import SingleColor from "./SingleColor";
+import items from './data';
+import Categories from './components/Categories';
+import Menu from './components/Menu';
+
+const allCategories = ['all', ...new Set(items.map(item => item.category))];
 
 function App() {
-    // 初始化state值
-    const [color, setColor] = useState('');
-    const [list, setList] = useState([]);
-    const [error, setError] = useState(false);
+    const [menuItems, setMenuItems] = useState(items);
+    const [categories, setCategories] = useState(allCategories);
 
-    // 提交事件
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        try {
-            // 获取颜色组
-            let colors = new Values(color).all(10);
-            setList(colors);
-            setError(false);
-        }catch (e){
-            console.log(e);
-            setError(true);
+    // 过滤菜单
+    const filterItems = (category) => {
+        if (category === 'all') {
+            setMenuItems(items);
+            return;
         }
+        const newItems = items.filter(item => item.category === category);
+        setMenuItems(newItems);
     }
+
     return (
-        //  React.Fragment
-        <>
-            <section className="container">
-                <h3>颜色生成器</h3>
-                <form onSubmit={handleSubmit}>
-                    <input type="text" placeholder="#f15025"
-                           className={`${error ? 'error' : null}`}
-                           onChange={(e) => setColor(e.target.value)}/>
-                    <button type="submit" className="btn">提交</button>
-                </form>
+        <main>
+            <section className="menu section">
+                <div className="title">
+                    <h2>美食美客——菜单</h2>
+                    <div className="underline"/>
+                </div>
+                <Categories categories={categories} filterItems={filterItems}/>
+                <Menu items={menuItems}/>
             </section>
-            <section className="colors">
-                {list.map((color,index) => {
-                    return (
-                        <SingleColor color={color} index={index} key={index} />
-                    )
-                })}
-            </section>
-        </>
+        </main>
     );
 }
 

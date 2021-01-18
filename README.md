@@ -1,6 +1,6 @@
 # React && Redux 练习
-### Color Generator 颜色选择器
-![demo](./src/demo.png)
+### Menu 美食菜单
+![demo](./public/images/demo.png)
 ##### 运行手脚架
 安装配置
 ```shell script
@@ -11,5 +11,3 @@ yarn install
 yarn start
 ```
 
-##### 使用库
-- [value.js](https://www.npmjs.com/package/values.js)
