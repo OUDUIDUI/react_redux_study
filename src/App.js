@@ -1,34 +1,62 @@
-import React, {useState} from 'react';
-import items from './data';
-import Categories from './components/Categories';
-import Menu from './components/Menu';
+import React,{useState,useEffect} from 'react';
+import Loading from "./components/Loading";
+import Tours from "./components/Tours";
 
-const allCategories = ['all', ...new Set(items.map(item => item.category))];
+const url = 'https://course-api.com/react-tours-project';
 
 function App() {
-    const [menuItems, setMenuItems] = useState(items);
-    const [categories, setCategories] = useState(allCategories);
+    // 初始化状态
+    const [tours,setTours] = useState([]);
+    const [loading,setLoading] = useState(true);
 
-    // 过滤菜单
-    const filterItems = (category) => {
-        if (category === 'all') {
-            setMenuItems(items);
-            return;
+    // 请求数据
+    const fetchTours = async () => {
+        setLoading(true);
+        try {
+            const res = await fetch(url);
+            const tours = await res.json();
+            setLoading(false);
+            setTours(tours);
+        }catch (e){
+            console.log(e);
+            setLoading(false);
         }
-        const newItems = items.filter(item => item.category === category);
-        setMenuItems(newItems);
+    }
+
+    // useEffect
+    useEffect(() => {
+        fetchTours();
+    },[])
+
+    // 判断加载
+    if(loading){
+        return (
+            <main>
+                <Loading />
+            </main>
+        )
+    }
+
+    if(!tours.length){
+        return (
+            <main>
+                <div className="title">
+                    <h2>No Tour</h2>
+                    <button onClick={()=> fetchTours()} className="btn">Refresh</button>
+                </div>
+            </main>
+        )
+    }
+
+    // 删除卡片
+    const removeTour = (id) => {
+        const newTours = tours.filter(tour => tour.id !== id);
+        setTours(newTours);
     }
 
     return (
         <main>
-            <section className="menu section">
-                <div className="title">
-                    <h2>美食美客——菜单</h2>
-                    <div className="underline"/>
-                </div>
-                <Categories categories={categories} filterItems={filterItems}/>
-                <Menu items={menuItems}/>
-            </section>
+            <Tours tours={tours} removeTour={removeTour} />
         </main>
     );
 }
