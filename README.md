@@ -1,5 +1,5 @@
 # React && Redux 练习
-### Tours 旅游目的地
+### Slider 幻灯片
 ![demo](./public/demo.png)
 ##### 运行手脚架
 安装配置

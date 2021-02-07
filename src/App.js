@@ -1,63 +1,64 @@
-import React,{useState,useEffect} from 'react';
-import Loading from "./components/Loading";
-import Tours from "./components/Tours";
-
-const url = 'https://course-api.com/react-tours-project';
+import React, {useState,useEffect} from 'react';
+import data from './data'
+import {FiChevronRight, FiChevronLeft} from "react-icons/fi";
+import {FaQuoteRight} from "react-icons/fa";
 
 function App() {
-    // 初始化状态
-    const [tours,setTours] = useState([]);
-    const [loading,setLoading] = useState(true);
+    // 初始化
+    const [ people ] = useState(data);
+    const [index, setIndex ] = useState(0);
 
-    // 请求数据
-    const fetchTours = async () => {
-        setLoading(true);
-        try {
-            const res = await fetch(url);
-            const tours = await res.json();
-            setLoading(false);
-            setTours(tours);
-        }catch (e){
-            console.log(e);
-            setLoading(false);
-        }
-    }
-
-    // useEffect
     useEffect(() => {
-        fetchTours();
-    },[])
+        const lastIndex = people.length - 1;
+        if(index < 0){
+            setIndex(lastIndex)
+        }else if(index > lastIndex) {
+            setIndex(0)
+        }
+    }, [index, people])
 
-    // 判断加载
-    if(loading){
-        return (
-            <main>
-                <Loading />
-            </main>
-        )
-    }
-
-    if(!tours.length){
-        return (
-            <main>
-                <div className="title">
-                    <h2>No Tour</h2>
-                    <button onClick={()=> fetchTours()} className="btn">Refresh</button>
-                </div>
-            </main>
-        )
-    }
-
-    // 删除卡片
-    const removeTour = (id) => {
-        const newTours = tours.filter(tour => tour.id !== id);
-        setTours(newTours);
-    }
+    // 自动播放
+    useEffect(() => {
+        let slider = setInterval(() => {
+            setIndex(index + 1)
+        },4000);
+        return () => clearInterval(slider)
+    }, [index])
 
     return (
-        <main>
-            <Tours tours={tours} removeTour={removeTour} />
-        </main>
+        <section className="section">
+            <div className="title">
+                <h2><span>/</span>Review</h2>
+            </div>
+            <div className="section-center">
+                {people.map((person,personIndex) => {
+                    const {id,image,name,title,quote} = person;
+                    // 动态添加class属性
+                    let articleClassName = 'nextSlide';
+                    if(personIndex === index) {
+                        articleClassName = 'activeSlide';
+                    }else if(personIndex === index - 1 || ( index === 0 && personIndex === people.length - 1)){
+                        articleClassName = 'lastSlide';
+                    }
+
+                    return (
+                        <article className={articleClassName} key={id}>
+                            <img src={image} alt={name} className="person-img" />
+                            <h4>{name}</h4>
+                            <p className="title">{title}</p>
+                            <p className="title">{quote}</p>
+                            <FaQuoteRight class="icon" />
+                        </article>
+                    )
+                })}
+                <button className="prev" onClick={() => setIndex( index - 1)}>
+                    <FiChevronLeft />
+                </button>
+                <button className="next" onClick={() => setIndex( index + 1)}>
+                    <FiChevronRight />
+                </button>
+            </div>
+        </section>
     );
 }
 
