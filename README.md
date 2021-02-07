@@ -1,6 +1,6 @@
 # React && Redux 练习
-### Menu 美食菜单
-![demo](./public/images/demo.png)
+### Tours 旅游目的地
+![demo](./public/demo.png)
 ##### 运行手脚架
 安装配置
 ```shell script
