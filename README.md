@@ -1,5 +1,5 @@
 # React && Redux 练习
-### Slider 幻灯片
+### Bookkeeper 记账器
 ![demo](./public/demo.png)
 ##### 运行手脚架
 安装配置
