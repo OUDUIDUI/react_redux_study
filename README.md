@@ -1,5 +1,5 @@
 # React && Redux 练习
-### Bookkeeper 记账器
+### Pagination 分页导航
 ![demo](./public/demo.png)
 ##### 运行手脚架
 安装配置
